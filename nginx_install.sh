@@ -89,7 +89,7 @@ tar -zxvf ngx_dynamic_upstream-0.1.6.tar.gz
 tar -zxvf nginx_upstream_check_module-v1.12.1+.tar.gz
 tar -zxvf nginx-${nginx_version}.tar.gz
 cd nginx-${nginx_version}
-patch -p0 < /usr/local/src/nginx_upstream_check_module-v1.12.1+/check_1.12.1+.patch
+patch -p1 < /usr/local/src/nginx_upstream_check_module-v1.12.1+/check_1.12.1+.patch
 
 # 创建nginx用户跟组
 useradd nginx -M -s /sbin/nologin
