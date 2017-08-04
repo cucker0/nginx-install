@@ -2,15 +2,17 @@
 # nginx install
 
 # 软件包
-# nginx-1.10.1.tar.gz、ngx_devel_kit_v0.3.0.tar.gz、ngx_dynamic_upstream_v0.1.5.tar.gz、nginx_upstream_check_module-master_1.9.2.zip、openssl-1.0.2h.tar.gz、LuaJIT-2.0.4.tar.gz、pcre-8.39.tar.gz、lua-nginx-module_v0.10.5.tar.gz
+#  LuaJIT-2.0.5.tar.gz nginx-1.12.1.tar.gz   ngx_devel_kit-0.3.0.tag.gz   openssl-1.0.2l.tar.gz lua-nginx-module-0.10.9rc8.tar.gz  nginx_upstream_check_module-v1.12.1+.tar.gz  ngx_dynamic_upstream-0.1.6.tar.gz  pcre-8.41.tar.gz init.d.nginx nginx-1.12.1_install.sh
 
-echo "begin install nginx..."
 
 # workdir path_exist_status
 workdir=`pwd`
 
 # nginx版本号
-nginx_version=`ls nginx-1.*.tar.gz |awk -F '-|.tar' '{print $2}' | head -n 1`
+#nginx_version=`ls nginx-1.*.tar.gz |awk -F '-|.tar' '{print $2}' | head -n 1`
+nginx_version="1.12.1"
+
+echo "begin install nginx..."
 
 # 是否已经添加默认的环境变量
 grep "^export PATH=" /etc/profile
@@ -89,14 +91,30 @@ tar -zxvf ngx_dynamic_upstream-0.1.6.tar.gz
 tar -zxvf nginx_upstream_check_module-v1.12.1+.tar.gz
 tar -zxvf nginx-${nginx_version}.tar.gz
 cd nginx-${nginx_version}
-patch -p1 < /usr/local/src/nginx_upstream_check_module-v1.12.1+/check_1.12.1+.patch
+patch -p1 < $workdir/nginx_upstream_check_module-v1.12.1+/check_1.12.1+.patch
 
 # 创建nginx用户跟组
 useradd nginx -M -s /sbin/nologin
 
 # 配置nginx
-./configure --prefix=/usr/local/nginx_${nginx_version} --user=nginx --group=nginx --with-http_stub_status_module --with-http_ssl_module --with-pcre=/usr/local/src/pcre-8.41 --with-http_realip_module --with-http_image_filter_module --with-http_gzip_static_module --with-openssl=/usr/local/src/openssl-1.0.2l --with-openssl-opt=enable-tlsext --add-module=/usr/local/src/ngx_devel_kit-0.3.0 --add-module=/usr/local/src/lua-nginx-module-0.10.9rc8 --add-module=/usr/local/src/nginx_upstream_check_module-v1.12.1+ --add-module=/usr/local/src/ngx_dynamic_upstream-0.1.6
-make; make install
+./configure --prefix=/usr/local/nginx_${nginx_version} --user=nginx --group=nginx --with-http_stub_status_module --with-http_ssl_module --with-pcre=$workdir/pcre-8.41 --with-http_realip_module --with-http_image_filter_module --with-http_gzip_static_module --with-openssl=$workdir/openssl-1.0.2l --with-openssl-opt=enable-tlsext --add-module=$workdir/ngx_devel_kit-0.3.0 --add-module=$workdir/lua-nginx-module-0.10.9rc8 --add-module=$workdir/nginx_upstream_check_module-v1.12.1+ --add-module=$workdir/ngx_dynamic_upstream-0.1.6
+if [ $? !=0 ]; then
+    echo "configure nginx failed!"
+    exit 1
+fi
+
+make;
+if [ $? !=0 ]; then
+    echo "make nginx failed!"
+    exit 1
+fi
+
+make install
+if [ $? !=0 ]; then
+    echo "make install nginx failed!"
+    exit 1
+fi
+
 cd ../
 ln -s /usr/local/nginx_${nginx_version} /usr/local/nginx
 # 添加nginx环境变量
