@@ -94,7 +94,8 @@ cd nginx-${nginx_version}
 patch -p1 < $workdir/nginx_upstream_check_module-v1.12.1+/check_1.12.1+.patch
 
 # 创建nginx用户跟组
-useradd nginx -M -s /sbin/nologin
+groupadd -g 901 nginx
+useradd nginx -M -u 901 -g 901 -s /sbin/nologin
 
 # 配置nginx
 ./configure --prefix=/usr/local/nginx_${nginx_version} --user=nginx --group=nginx --with-http_stub_status_module --with-http_ssl_module --with-pcre=$workdir/pcre-8.41 --with-http_realip_module --with-http_image_filter_module --with-http_gzip_static_module --with-openssl=$workdir/openssl-1.0.2l --with-openssl-opt=enable-tlsext --add-module=$workdir/ngx_devel_kit-0.3.0 --add-module=$workdir/lua-nginx-module-0.10.9rc8 --add-module=$workdir/nginx_upstream_check_module-v1.12.1+ --add-module=$workdir/ngx_dynamic_upstream-0.1.6
