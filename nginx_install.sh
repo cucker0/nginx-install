@@ -19,7 +19,7 @@ grep "^export PATH=" /etc/profile
 path_exist_status=`echo $?`
 
 # 不存在添加默认系统环境变量
-if [ path_exist_status != "0" ]; then
+if [ $path_exist_status != "0" ]; then
     echo "## PATH" >> /etc/profile
     echo export PATH=$PATH >> /etc/profile
 fi
