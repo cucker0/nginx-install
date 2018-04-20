@@ -11,7 +11,11 @@ chmod +x nginx_install.sh
 ./nginx_install.sh
 
 举例：
-yum -y install git; mkdir /usr/local/src/nginx-1.12.1_v0; cd /usr/local/src/nginx-1.12.1_v0; git clone https://github.com/cucker0/nginx-install.git; cd nginx-install; chmod +x nginx_install.sh; ./nginx_install.sh; . /etc/profile;
+nginx-1.12.1
+yum -y install git; mkdir /usr/local/src/nginx-1.12.1_v0; cd /usr/local/src/nginx-1.12.1_v0; git clone https://github.com/cucker0/nginx-install.git; cd nginx-install/nginx-1.12.1; chmod +x nginx_install.sh; ./nginx_install.sh; . /etc/profile;
 
+
+nginx-1.12.2
+yum -y install git; mkdir /usr/local/src/nginx-1.12.2_v0; cd /usr/local/src/nginx-1.12.2_v0; git clone https://github.com/cucker0/nginx-install.git; cd nginx-install/nginx-1.12.2; chmod +x nginx_install.sh; ./nginx_install.sh; . /etc/profile;
 
 ```
