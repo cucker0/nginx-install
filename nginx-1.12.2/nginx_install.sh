@@ -25,6 +25,20 @@ if [ $path_exist_status != "0" ]; then
 fi
 . /etc/profile
 
+# 设置ld.so
+cat <<ENDOF >>/etc/ld.so.conf
+include ld.so.conf.d/*.conf
+/usr/local/lib
+/usr/local/lib64
+/lib
+/lib64
+/usr/lib
+/usr/lib64
+
+ENDOF
+
+ldconfig
+
 # 依赖安装
 yum -y install zlib zlib-devel gd gd-devel perl
 yum install -y bind-utils traceroute wget man sudo ntp ntpdate screen patch make gcc gcc-c++ flex bison zip unzip ftp net-tools --skip-broken 
@@ -32,6 +46,7 @@ yum install -y bind-utils traceroute wget man sudo ntp ntpdate screen patch make
 if [ $? !=0 ]; then
     echo "依赖安装有错!"
 fi
+
 
 # 安装openssh
 cd $workdir
