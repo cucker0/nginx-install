@@ -27,6 +27,7 @@ fi
 
 # 依赖安装
 yum -y install zlib zlib-devel gd gd-devel perl
+yum install -y bind-utils traceroute wget man sudo ntp ntpdate screen patch make gcc gcc-c++ flex bison zip unzip ftp net-tools --skip-broken 
 
 if [ $? !=0 ]; then
     echo "依赖安装有错!"
