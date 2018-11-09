@@ -21,5 +21,8 @@ yum -y install git; mkdir /usr/local/src/nginx-1.12.2_v0; cd /usr/local/src/ngin
 
 # nginx upstream check 项目
 https://github.com/zhouchangxun/ngx_healthcheck_module
+# 阿里nginx_upstream_check_module
+https://github.com/yaoweibin/nginx_upstream_check_module
+
 
 ```
