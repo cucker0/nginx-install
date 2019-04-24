@@ -132,7 +132,7 @@ function nginx_install() {
         echo "nginx安装包未解压!"
         exit 1
     fi
-    ./configure --prefix=/usr/local/nginx_${nginx_version} --user=nginx --group=nginx --with-http_stub_status_module --with-http_ssl_module --with-pcre=${workdir}/pcre-8.41 --with-http_realip_module --with-http_image_filter_module --with-http_gzip_static_module --with-openssl=${workdir}/openssl-1.0.2l --add-module=${workdir}/ngx_devel_kit-0.3.0 --add-module=${workdir}/lua-nginx-module-0.10.9rc8 --add-module=${workdir}/nginx_upstream_check_module-v1.12.1+ --add-module=${workdir}/ngx_dynamic_upstream-0.1.6 --with-openssl-opt="enable-tlsext" --with-stream --with-stream_ssl_module --with-http_v2_module
+    ./configure --prefix=/usr/local/nginx_${nginx_version} --user=nginx --group=nginx --with-http_stub_status_module --with-http_ssl_module --with-pcre=${workdir}/pcre-8.42 --with-http_realip_module --with-http_image_filter_module --with-http_gzip_static_module --with-openssl=${workdir}/openssl-1.0.2l --add-module=${workdir}/ngx_devel_kit-0.3.0 --add-module=${workdir}/lua-nginx-module-0.10.9rc8 --add-module=${workdir}/nginx_upstream_check_module-v1.12.1+ --add-module=${workdir}/ngx_dynamic_upstream-0.1.6 --with-openssl-opt="enable-tlsext" --with-stream --with-stream_ssl_module --with-http_v2_module
     if [ $? !=0 ]; then
         echo "configure nginx failed!"
         exit 1
