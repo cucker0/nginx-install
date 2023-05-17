@@ -267,11 +267,7 @@ function nginx_auto_start_script() {
         ldconfig
         sleep 1
         service nginx start
-    fi
-
-    ## CentOS 7
-    uname -r| grep '^3.10.'
-    if [ $? == 0 ]; then
+    else
         cat <<ENDOF > /usr/lib/systemd/system/nginx.service
 [Unit]
 Description=nginx - high performance web server
@@ -296,6 +292,7 @@ ENDOF
         sleep 1
         systemctl start nginx.service
     fi
+
 }
 
 function check_nginx_is_ok() {
