@@ -4,7 +4,7 @@
 # email: hanxiao2100@qq.com
 
 # 软件包
-# nginx-1.24.0.tar.gz LuaJIT-2.0.5.tar.gz openssl-3.1.0.tar.gz pcre2-10.42.tar.gz ngx_devel_kit-0.3.2.tag.gz lua-nginx-module-0.10.24.tar.gz ngx_healthcheck_module_1.19+.tar.gz ngx_dynamic_upstream-0.1.6.tar.gz init.d.nginx nginx_install.sh
+# nginx-1.24.0.tar.gz LuaJIT-2.0.5.tar.gz openssl-3.1.0.tar.gz pcre2-10.42.tar.gz ngx_devel_kit-0.3.2.tar.gz lua-nginx-module-0.10.24.tar.gz ngx_healthcheck_module_1.19+.tar.gz ngx_dynamic_upstream-0.1.6.tar.gz init.d.nginx nginx_install.sh
 # nginx: http://nginx.org/en/download.html
 # LuaJIT: http://luajit.org
 # openssl: https://www.openssl.org/source
@@ -103,12 +103,15 @@ function openssl_install() {
         echo "OpenSSL ${OPENSSL_VERSION} already install"
         return
     fi
-
+    
+    yum -y install perl-FindBin perl-IPC-Cmd perl-File-Compare perl-File-Copy
     cd ${workdir}
     tar -zxvf openssl-${OPENSSL_VERSION}.tar.gz; cd openssl-${OPENSSL_VERSION}
-    ./config; make; make install
-    mv /usr/bin/openssl /usr/bin/openssl_1.0.1e-fips
-    ln -s /usr/local/ssl/bin/openssl /usr/bin/openssl
+    ./config --prefix=/usr/local/openssl_${OPENSSL_VERSION}; 
+    make; 
+    #make install
+    #mv /usr/bin/openssl /usr/bin/openssl_1.0.1e-fips
+    #ln -s /usr/local/ssl/bin/openssl /usr/bin/openssl
     cd ../
 
     ldconfig
@@ -128,7 +131,8 @@ function pcre_install() {
 
     cd ${workdir}
     tar -zxvf pcre2-${PCRE_VERSION}.tar.gz; cd pcre2-${PCRE_VERSION}
-    ./configure --enable-jit; make; make install
+    ./configure --enable-jit; make; 
+    #make install
     cd ../
 
     if [ $? != 0 ]; then
@@ -173,7 +177,7 @@ function before_nginx_install() {
     # 解压相关tar包
     cd ${workdir}
     tar -zxvf lua-nginx-module-0.10.24.tar.gz
-    tar -zxvf ngx_devel_kit-0.3.2.tag.gz
+    tar -zxvf ngx_devel_kit-0.3.2.tar.gz
     tar -zxvf ngx_dynamic_upstream-0.1.6.tar.gz
 
     # 打上nginx_upstream_check_module 补丁
@@ -206,7 +210,7 @@ function nginx_install() {
         echo "nginx安装包未解压!"
         exit 1
     fi
-    ./configure --prefix=/usr/local/nginx_${NGINX_VERSION} --user=nginx --group=nginx --with-http_stub_status_module --with-http_ssl_module --with-pcre=${workdir}/pcre2-10.42 --with-http_realip_module --with-http_image_filter_module --with-http_gzip_static_module --with-openssl=${workdir}/openssl-3.1.0 --add-module=${workdir}/ngx_devel_kit-0.3.2 --add-module=${workdir}/lua-nginx-module-0.10.24 --add-module=${workdir}/ngx_healthcheck_module_1.19+ --add-module=${workdir}/ngx_dynamic_upstream-0.1.6 --with-stream --with-stream_ssl_module --with-http_v2_module
+    ./configure --prefix=/usr/local/nginx_${NGINX_VERSION} --user=nginx --group=nginx --with-http_stub_status_module --with-http_ssl_module --with-ld-opt='-lpcre' --with-http_realip_module --with-http_image_filter_module --with-http_gzip_static_module --with-openssl=${workdir}/openssl-3.1.0 --add-module=${workdir}/ngx_devel_kit-0.3.2 --add-module=${workdir}/lua-nginx-module-0.10.24 --add-module=${workdir}/ngx_healthcheck_module_1.19+ --add-module=${workdir}/ngx_dynamic_upstream-0.1.6 --with-stream --with-stream_ssl_module --with-http_v2_module
     
     if [ $? != 0 ]; then
         echo "configure nginx failed!"
@@ -315,7 +319,7 @@ function main() {
     install_dependent_components
     check_dependent_components_install_status
     openssl_install
-    pcre_install
+    #pcre_install
     lua_install
     before_nginx_install
     nginx_install
