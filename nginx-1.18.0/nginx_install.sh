@@ -4,7 +4,7 @@
 # email: hanxiao2100@qq.com
 
 # 软件包
-#  nginx-1.18.0.tar.gz LuaJIT-2.0.5.tar.gz openssl-1.1.1i.tar.gz pcre-8.44.tar.gz ngx_devel_kit-0.3.0.tag.gz lua-nginx-module-0.10.19.tar.gz ngx_healthcheck_module_1.14+.tar.gz ngx_dynamic_upstream-0.1.6.tar.gz init.d.nginx nginx-1.18.0_install.sh
+#  nginx-1.18.0.tar.gz LuaJIT-2.0.5.tar.gz openssl-1.1.1i.tar.gz pcre-8.44.tar.gz ngx_devel_kit-0.3.1.tag.gz lua-nginx-module-0.10.19.tar.gz ngx_healthcheck_module_1.16+.tar.gz ngx_dynamic_upstream-0.1.6.tar.gz init.d.nginx nginx_install.sh
 # nginx: http://nginx.org/en/download.html
 # LuaJIT: http://luajit.org
 # openssl: https://www.openssl.org/source
@@ -173,14 +173,14 @@ function before_nginx_install() {
     # 解压相关tar包
     cd ${workdir}
     tar -zxvf lua-nginx-module-0.10.19.tar.gz
-    tar -zxvf ngx_devel_kit-0.3.0.tag.gz
+    tar -zxvf ngx_devel_kit-0.3.1.tag.gz
     tar -zxvf ngx_dynamic_upstream-0.1.6.tar.gz
 
     # 打上nginx_upstream_check_module 补丁
-    tar -zxvf ngx_healthcheck_module_1.14+.tar.gz
+    tar -zxvf ngx_healthcheck_module_1.16+.tar.gz
     tar -zxvf nginx-${NGINX_VERSION}.tar.gz
     cd nginx-${NGINX_VERSION}
-    patch -p1 < ${workdir}/ngx_healthcheck_module_1.14+/nginx_healthcheck_for_nginx_1.14+.patch
+    patch -p1 < ${workdir}/ngx_healthcheck_module_1.16+/nginx_healthcheck_for_nginx_1.14+.patch
 
     # 创建nginx用户和组
     groupadd -g 901 nginx
@@ -206,7 +206,7 @@ function nginx_install() {
         echo "nginx安装包未解压!"
         exit 1
     fi
-    ./configure --prefix=/usr/local/nginx_${NGINX_VERSION} --user=nginx --group=nginx --with-http_stub_status_module --with-http_ssl_module --with-pcre=${workdir}/pcre-8.44 --with-http_realip_module --with-http_image_filter_module --with-http_gzip_static_module --with-openssl=${workdir}/openssl-1.1.1i --add-module=${workdir}/ngx_devel_kit-0.3.0 --add-module=${workdir}/lua-nginx-module-0.10.19 --add-module=${workdir}/ngx_healthcheck_module_1.16+ --add-module=${workdir}/ngx_dynamic_upstream-0.1.6 --with-stream --with-stream_ssl_module --with-http_v2_module
+    ./configure --prefix=/usr/local/nginx_${NGINX_VERSION} --user=nginx --group=nginx --with-http_stub_status_module --with-http_ssl_module --with-pcre=${workdir}/pcre-8.44 --with-http_realip_module --with-http_image_filter_module --with-http_gzip_static_module --with-openssl=${workdir}/openssl-1.1.1i --add-module=${workdir}/ngx_devel_kit-0.3.1 --add-module=${workdir}/lua-nginx-module-0.10.19 --add-module=${workdir}/ngx_healthcheck_module_1.16+ --add-module=${workdir}/ngx_dynamic_upstream-0.1.6 --with-stream --with-stream_ssl_module --with-http_v2_module
         
     if [ $? != 0 ]; then
         echo "configure nginx failed!"

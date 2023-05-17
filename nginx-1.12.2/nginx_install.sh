@@ -4,7 +4,7 @@
 # email: hanxiao2100@qq.com
 
 # 软件包
-#  LuaJIT-2.0.5.tar.gz nginx-1.12.2.tar.gz   ngx_devel_kit-0.3.0.tag.gz   openssl-1.0.2o.tar.gz lua-nginx-module-0.10.9rc8.tar.gz  nginx_upstream_check_module-v1.12.1+.tar.gz  ngx_dynamic_upstream-0.1.6.tar.gz  pcre-8.42.tar.gz init.d.nginx nginx-1.12.2_install.sh
+#  LuaJIT-2.0.5.tar.gz nginx-1.12.2.tar.gz   ngx_devel_kit-0.3.0.tag.gz   openssl-1.0.2o.tar.gz lua-nginx-module-0.10.9rc8.tar.gz  nginx_upstream_check_module-v1.12.1+.tar.gz  ngx_dynamic_upstream-0.1.6.tar.gz  pcre-8.42.tar.gz init.d.nginx nginx_install.sh
 # nginx: http://nginx.org/en/download.html
 # LuaJIT: http://luajit.org
 # openssl: https://www.openssl.org/source
