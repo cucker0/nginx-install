@@ -255,7 +255,7 @@ function after_nginx_install() {
     fi
 
     mv /usr/local/nginx_${NGINX_VERSION}/conf /usr/local/nginx_${NGINX_VERSION}/conf_yl
-    ln -s /usr/local/nginx_${NGINX_VERSION}/conf /etc/nginx 
+    ln -s /etc/nginx /usr/local/nginx_${NGINX_VERSION}/conf  
 
 }
 
@@ -303,6 +303,7 @@ function check_nginx_is_ok() {
     # 检查nginx安装正常
     ldconfig
     . /etc/profile
+    nginx -t
     if [ $? == 0 ]; then
         echo "nginx install success."
     else
