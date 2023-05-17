@@ -34,7 +34,7 @@ yum -y install git; \
 # nginx-1.18.0
 yum -y install git; \
  mkdir /usr/local/src/nginx-1.18.0_v0; \
- cd /usr/local/src/nginx-1.14.2_v0; \
+ cd /usr/local/src/nginx-1.18.0_v0; \
  git clone https://github.com/cucker0/nginx-install.git; \
  cd nginx-install/nginx-1.18.0; \
  bash ./nginx_install.sh; \
