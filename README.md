@@ -4,39 +4,14 @@ nginx install package and install script
 
 ## How to Install
 ```
-# nginx-1.12.1
-yum -y install git; \
- mkdir /usr/local/src/nginx-1.12.1_v0; \
- cd /usr/local/src/nginx-1.12.1_v0; \
- git clone https://github.com/cucker0/nginx-install.git; \
- cd nginx-install/nginx-1.12.1; \
- bash ./nginx_install.sh; \
- . /etc/profile;
+# 可选版本 1.12.1、1.12.2、1.14.2、1.18.0、1.24.0
+nginx_version=1.24.0
 
-nginx-1.12.2
 yum -y install git; \
- mkdir /usr/local/src/nginx-1.12.2_v0; \
- cd /usr/local/src/nginx-1.12.2_v0; \
+ mkdir -p /usr/local/src/nginx-${nginx_version}_v0; \
+ cd /usr/local/src/nginx-${nginx_version}_v0; \
  git clone https://github.com/cucker0/nginx-install.git; \
- cd nginx-install/nginx-1.12.2; \
- bash ./nginx_install.sh; \
- . /etc/profile;
-
-# nginx-1.14.2
-yum -y install git; \
- mkdir /usr/local/src/nginx-1.14.2_v0; \
- cd /usr/local/src/nginx-1.14.2_v0; \
- git clone https://github.com/cucker0/nginx-install.git; \
- cd nginx-install/nginx-1.14.2; \
- bash ./nginx_install.sh; \
- . /etc/profile;
-
-# nginx-1.18.0
-yum -y install git; \
- mkdir /usr/local/src/nginx-1.18.0_v0; \
- cd /usr/local/src/nginx-1.18.0_v0; \
- git clone https://github.com/cucker0/nginx-install.git; \
- cd nginx-install/nginx-1.18.0; \
+ cd nginx-install/nginx-${nginx_version}; \
  bash ./nginx_install.sh; \
  . /etc/profile;
 
