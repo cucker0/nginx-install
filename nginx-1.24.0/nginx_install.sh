@@ -4,7 +4,7 @@
 # email: hanxiao2100@qq.com
 
 # 软件包
-# nginx-1.24.0.tar.gz LuaJIT-2.0.5.tar.gz openssl-3.1.0.tar.gz pcre2-10.42.tar.gz ngx_devel_kit-0.3.2.tar.gz lua-nginx-module-0.10.24.tar.gz ngx_healthcheck_module_1.19+.tar.gz ngx_dynamic_upstream-0.1.6.tar.gz init.d.nginx nginx_install.sh
+# nginx-1.24.0.tar.gz LuaJIT-2.0.5.tar.gz openssl-3.1.0.tar.gz pcre2-10.42.tar.gz ngx_devel_kit-0.3.2.tar.gz lua-nginx-module-0.10.14.tar.gz ngx_healthcheck_module_1.19+.tar.gz ngx_dynamic_upstream-0.1.6.tar.gz init.d.nginx nginx_install.sh
 # nginx: http://nginx.org/en/download.html
 # LuaJIT: http://luajit.org
 # openssl: https://www.openssl.org/source
@@ -22,7 +22,7 @@ workdir=`pwd`
 NGINX_VERSION="1.24.0"
 OPENSSL_VERSION="3.1.0"
 PCRE_VERSION="10.42"
-LUAJIT_VERSION="2.0.5"
+LUAJIT_VERSION="2.1-20230410"
 
 function system_path_config() {
     # 系统环境变量配置与重载
@@ -146,28 +146,30 @@ function pcre_install() {
 
 function lua_install() {
     # 安装Lua,nginx_lua_module模块依赖lua环境
-    if [ -d "/usr/local/include/luajit-2.0" ]; then # 判断是否已经安装LuaJIT
-        luajit -v |grep -i luajit
-        if [ $? == 0 ]; then
-            echo "LuaJIT 2 already install"
-            return
-        fi
+    luajit -v |grep -i luajit
+    if [ $? == 0 ]; then
+        echo "LuaJIT 2 already install"
+        return
     fi
 
     cd ${workdir}
-    tar -zxvf LuaJIT-${LUAJIT_VERSION}.tar.gz
-    cd LuaJIT-${LUAJIT_VERSION}
-    make; make install
+    tar -zxvf luajit2-${LUAJIT_VERSION}.tar.gz
+    cd luajit2-${LUAJIT_VERSION}
+    #make PREFIX=/usr/local/luajit
+    #make install PREFIX=/usr/local/luajit
+    make; 
+    make install
     cd ../
 
     ldconfig
     # 添加lua lib
     if [ ! $LUAJIT_LIB ]; then
-        cat <<ENDOF >>/etc/profile
-## Lua
+        cat >> /etc/profile <<ENDOF
+## Luajit
 export LUAJIT_LIB=/usr/local/lib
-export LUAJIT_INC=/usr/local/include/luajit-2.0
+export LUAJIT_INC=/usr/local/include/luajit-2.1
 ENDOF
+
     fi
     source /etc/profile
 }
@@ -176,7 +178,7 @@ function before_nginx_install() {
     # nginx安装前准备工作
     # 解压相关tar包
     cd ${workdir}
-    tar -zxvf lua-nginx-module-0.10.24.tar.gz
+    tar -zxvf lua-nginx-module-0.10.14.tar.gz
     tar -zxvf ngx_devel_kit-0.3.2.tar.gz
     tar -zxvf ngx_dynamic_upstream-0.1.6.tar.gz
 
@@ -210,7 +212,7 @@ function nginx_install() {
         echo "nginx安装包未解压!"
         exit 1
     fi
-    ./configure --prefix=/usr/local/nginx_${NGINX_VERSION} --user=nginx --group=nginx --with-http_stub_status_module --with-http_ssl_module --with-ld-opt='-lpcre' --with-http_realip_module --with-http_image_filter_module --with-http_gzip_static_module --with-openssl=${workdir}/openssl-3.1.0 --add-module=${workdir}/ngx_devel_kit-0.3.2 --add-module=${workdir}/lua-nginx-module-0.10.24 --add-module=${workdir}/ngx_healthcheck_module_1.19+ --add-module=${workdir}/ngx_dynamic_upstream-0.1.6 --with-stream --with-stream_ssl_module --with-http_v2_module
+    ./configure --prefix=/usr/local/nginx_${NGINX_VERSION} --user=nginx --group=nginx --with-http_stub_status_module --with-http_ssl_module --with-ld-opt='-lpcre' --with-http_realip_module --with-http_image_filter_module --with-http_gzip_static_module --with-openssl=${workdir}/openssl-3.1.0 --add-module=${workdir}/ngx_devel_kit-0.3.2 --add-module=${workdir}/lua-nginx-module-0.10.14 --add-module=${workdir}/ngx_healthcheck_module_1.19+ --add-module=${workdir}/ngx_dynamic_upstream-0.1.6 --with-stream --with-stream_ssl_module --with-http_v2_module
     
     if [ $? != 0 ]; then
         echo "configure nginx failed!"
@@ -309,6 +311,23 @@ function check_nginx_is_ok() {
     else
         echo "nginx install failed!"
     fi
+}
+
+# fix failed to load the 'resty.core' module
+fix_lua_resty_core() {
+    cd ${workdir}
+    tar -zxvf lua-resty-core-0.1.26.tar.gz -C /usr/local/
+    mv /usr/local/lua-resty-core-0.1.26 /usr/local/lua-resty-core
+    local resty_core=$(cat <<ENDOF
+    lua_package_path "/usr/local/lua-resty-core/lib/?.lua;;";
+
+    init_by_lua_block {
+        require "resty.core"
+        collectgarbage("collect")  -- just to collect any garbage
+    }
+ENDOF
+)
+    sed "^[ ]*/http {/a\${resty_core}" /etc/nginx/nginx.conf
 }
 
 function main() {
