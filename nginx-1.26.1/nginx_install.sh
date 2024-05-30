@@ -224,6 +224,7 @@ function nginx_install() {
         exit 1
     fi
     # Since nginx 1.21.5, Change: now nginx is built with the PCRE2 library by default.
+    # use --with-ld-opt='-lpcre'
     ./configure --prefix=/usr/local/nginx_${NGINX_VERSION} --user=nginx --group=nginx --with-http_stub_status_module --with-http_ssl_module --with-ld-opt='-lpcre' --with-http_realip_module --with-http_image_filter_module --with-http_gzip_static_module --with-openssl=${workdir}/openssl-${OPENSSL_VERSION} --add-module=${workdir}/ngx_devel_kit-${NGX_DEVEL_KIT_VERSION} --add-module=${workdir}/lua-nginx-module-${LUA_NGINX_MODULE_VERSION} --add-module=${workdir}/ngx_healthcheck_module_1.19+ --add-module=${workdir}/ngx_dynamic_upstream-0.1.6 --with-stream --with-stream_ssl_module --with-http_v2_module
     
     if [ $? != 0 ]; then

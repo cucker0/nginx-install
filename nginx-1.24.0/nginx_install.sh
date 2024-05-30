@@ -4,7 +4,7 @@
 # email: hanxiao2100@qq.com
 
 # 软件包
-# nginx-1.24.0.tar.gz LuaJIT-2.0.5.tar.gz openssl-3.1.0.tar.gz pcre2-10.42.tar.gz ngx_devel_kit-0.3.2.tar.gz lua-nginx-module-0.10.14.tar.gz ngx_healthcheck_module_1.19+.tar.gz ngx_dynamic_upstream-0.1.6.tar.gz init.d.nginx nginx_install.sh
+# nginx-1.24.0.tar.gz luajit2-2.1-20230410.tar.gz openssl-3.1.0.tar.gz pcre2-10.42.tar.gz ngx_devel_kit-0.3.2.tar.gz lua-nginx-module-0.10.14.tar.gz ngx_healthcheck_module_1.19+.tar.gz ngx_dynamic_upstream-0.1.6.tar.gz init.d.nginx nginx_install.sh
 # nginx: http://nginx.org/en/download.html
 # LuaJIT: http://luajit.org
 # luajit2: https://github.com/openresty/luajit2
@@ -14,6 +14,11 @@
 # lua-nginx-module: https://github.com/openresty/lua-nginx-module/tags
 # ngx_healthcheck_module: https://github.com/zhouchangxun/ngx_healthcheck_module
 # ngx_dynamic_upstream: https://github.com/cubicdaiya/ngx_dynamic_upstream/tags
+# lua-resty-core: https://github.com/openresty/lua-resty-core/tags
+# lua-resty-lrucache: https://github.com/openresty/lua-resty-lrucache/tags
+
+# pcre 使用 nginx 集成的
+
 
 # workdir path_exist_status
 workdir=`pwd`
@@ -24,6 +29,9 @@ NGINX_VERSION="1.24.0"
 OPENSSL_VERSION="3.1.0"
 PCRE_VERSION="10.42"
 LUAJIT_VERSION="2.1-20230410"
+LUA_NGINX_MODULE_VERSION="0.10.14"
+LUA_RESTY_CORE_VERSION="0.1.28"
+LUA_RESTY_LRUCACHE="0.13"
 
 function system_path_config() {
     # 系统环境变量配置与重载
@@ -179,7 +187,7 @@ function before_nginx_install() {
     # nginx安装前准备工作
     # 解压相关tar包
     cd ${workdir}
-    tar -zxvf lua-nginx-module-0.10.14.tar.gz
+    tar -zxvf lua-nginx-module-${LUA_NGINX_MODULE_VERSION}.tar.gz
     tar -zxvf ngx_devel_kit-0.3.2.tar.gz
     tar -zxvf ngx_dynamic_upstream-0.1.6.tar.gz
 
@@ -213,7 +221,9 @@ function nginx_install() {
         echo "nginx安装包未解压!"
         exit 1
     fi
-    ./configure --prefix=/usr/local/nginx_${NGINX_VERSION} --user=nginx --group=nginx --with-http_stub_status_module --with-http_ssl_module --with-ld-opt='-lpcre' --with-http_realip_module --with-http_image_filter_module --with-http_gzip_static_module --with-openssl=${workdir}/openssl-3.1.0 --add-module=${workdir}/ngx_devel_kit-0.3.2 --add-module=${workdir}/lua-nginx-module-0.10.14 --add-module=${workdir}/ngx_healthcheck_module_1.19+ --add-module=${workdir}/ngx_dynamic_upstream-0.1.6 --with-stream --with-stream_ssl_module --with-http_v2_module
+    # Since nginx 1.21.5, Change: now nginx is built with the PCRE2 library by default. 
+    # use --with-ld-opt='-lpcre'
+    ./configure --prefix=/usr/local/nginx_${NGINX_VERSION} --user=nginx --group=nginx --with-http_stub_status_module --with-http_ssl_module --with-ld-opt='-lpcre' --with-http_realip_module --with-http_image_filter_module --with-http_gzip_static_module --with-openssl=${workdir}/openssl-3.1.0 --add-module=${workdir}/ngx_devel_kit-0.3.2 --add-module=${workdir}/lua-nginx-module-${LUA_NGINX_MODULE_VERSION} --add-module=${workdir}/ngx_healthcheck_module_1.19+ --add-module=${workdir}/ngx_dynamic_upstream-0.1.6 --with-stream --with-stream_ssl_module --with-http_v2_module
     
     if [ $? != 0 ]; then
         echo "configure nginx failed!"
@@ -314,21 +324,20 @@ function check_nginx_is_ok() {
     fi
 }
 
-# fix failed to load the 'resty.core' module
+# fix that `nginx: [alert] failed to load the 'resty.core' module` 
 fix_lua_resty_core() {
     cd ${workdir}
-    tar -zxvf lua-resty-core-0.1.26.tar.gz -C /usr/local/
-    mv /usr/local/lua-resty-core-0.1.26 /usr/local/lua-resty-core
-    local resty_core=$(cat <<ENDOF
-    lua_package_path "/usr/local/lua-resty-core/lib/?.lua;;";
-
-    init_by_lua_block {
-        require "resty.core"
-        collectgarbage("collect")  -- just to collect any garbage
-    }
-ENDOF
-)
-    sed "^[ ]*/http {/a\${resty_core}" /etc/nginx/nginx.conf
+    tar -zxvf lua-resty-core-${LUA_RESTY_CORE_VERSION}.tar.gz
+    cd lua-resty-core-${LUA_RESTY_CORE_VERSION}
+    # Why LUA_LIB_DIR is `/usr/local/share/lua/5.1`, because nginx load default LUA_LIB_DIR is `/usr/local/share/lua/5.1`.
+    # Reference https://github.com/openresty/lua-resty-core?tab=readme-ov-file#installation
+    make install LUA_LIB_DIR=/usr/local/share/lua/5.1
+    
+    # fix that `reason: /usr/local/share/lua/5.1/resty/core/regex.lua:14: module 'resty.lrucache' not found`
+    cd ${workdir}
+    tar -zxvf lua-resty-lrucache-${LUA_RESTY_LRUCACHE}.tar
+    cd lua-resty-lrucache-${LUA_RESTY_LRUCACHE}
+    make install LUA_LIB_DIR=/usr/local/share/lua/5.1
 }
 
 function main() {
