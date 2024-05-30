@@ -4,7 +4,7 @@
 # email: hanxiao2100@qq.com
 
 # 软件包
-# nginx-1.24.0.tar.gz luajit2-2.1-20230410.tar.gz openssl-3.1.0.tar.gz pcre2-10.42.tar.gz ngx_devel_kit-0.3.2.tar.gz lua-nginx-module-0.10.14.tar.gz ngx_healthcheck_module_1.19+.tar.gz ngx_dynamic_upstream-0.1.6.tar.gz init.d.nginx nginx_install.sh
+# nginx-1.24.0.tar.gz luajit2-2.1-20230410.tar.gz openssl-3.1.0.tar.gz pcre2-10.42.tar.gz ngx_devel_kit-0.3.2.tar.gz lua-nginx-module-0.10.24.tar.gz ngx_healthcheck_module_1.19+.tar.gz ngx_dynamic_upstream-0.1.6.tar.gz init.d.nginx nginx_install.sh
 # nginx: http://nginx.org/en/download.html
 # LuaJIT: http://luajit.org
 # luajit2: https://github.com/openresty/luajit2
@@ -29,7 +29,7 @@ NGINX_VERSION="1.24.0"
 OPENSSL_VERSION="3.1.0"
 PCRE_VERSION="10.42"
 LUAJIT_VERSION="2.1-20230410"
-LUA_NGINX_MODULE_VERSION="0.10.14"
+LUA_NGINX_MODULE_VERSION="0.10.24"
 LUA_RESTY_CORE_VERSION="0.1.28"
 LUA_RESTY_LRUCACHE="0.13"
 
@@ -335,7 +335,7 @@ fix_lua_resty_core() {
     
     # fix that `reason: /usr/local/share/lua/5.1/resty/core/regex.lua:14: module 'resty.lrucache' not found`
     cd ${workdir}
-    tar -zxvf lua-resty-lrucache-${LUA_RESTY_LRUCACHE}.tar
+    tar -zxvf lua-resty-lrucache-${LUA_RESTY_LRUCACHE}.tar.gz
     cd lua-resty-lrucache-${LUA_RESTY_LRUCACHE}
     make install LUA_LIB_DIR=/usr/local/share/lua/5.1
 }
@@ -351,6 +351,7 @@ function main() {
     openssl_install
     #pcre_install
     lua_install
+    fix_lua_resty_core
     before_nginx_install
     nginx_install
     nginx_system_path_config

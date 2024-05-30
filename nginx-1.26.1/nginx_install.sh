@@ -354,7 +354,7 @@ fix_lua_resty_core() {
     
     # fix that `reason: /usr/local/share/lua/5.1/resty/core/regex.lua:14: module 'resty.lrucache' not found`
     cd ${workdir}
-    tar -zxvf lua-resty-lrucache-${LUA_RESTY_LRUCACHE}.tar
+    tar -zxvf lua-resty-lrucache-${LUA_RESTY_LRUCACHE}.tar.gz
     cd lua-resty-lrucache-${LUA_RESTY_LRUCACHE}
     make install LUA_LIB_DIR=/usr/local/share/lua/5.1
 }
