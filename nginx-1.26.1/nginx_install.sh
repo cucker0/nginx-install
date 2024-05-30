@@ -4,9 +4,10 @@
 # email: hanxiao2100@qq.com
 
 # 软件包
-# nginx-1.26.1.tar.gz LuaJIT-2.1-20230410.tar.gz openssl-3.2.1.tar.gz pcre2-10.43.tar.gz ngx_devel_kit-0.3.2.tar.gz lua-nginx-module-0.10.26.tar.gz ngx_healthcheck_module_1.19+.tar.gz ngx_dynamic_upstream-0.1.6.tar.gz init.d.nginx nginx_install.sh
+# nginx-1.26.1.tar.gz luajit2-2.1-20240314.tar.gz openssl-3.2.1.tar.gz pcre2-10.43.tar.gz ngx_devel_kit-0.3.2.tar.gz lua-nginx-module-0.10.26.tar.gz ngx_healthcheck_module_1.19+.tar.gz ngx_dynamic_upstream-0.1.6.tar.gz init.d.nginx nginx_install.sh
 # nginx: http://nginx.org/en/download.html
 # LuaJIT: http://luajit.org
+# luajit2: https://github.com/openresty/luajit2
 # openssl: https://www.openssl.org/source
 # pcre: http://www.pcre.org
 # ngx_devel_kit: https://github.com/simplresty/ngx_devel_kit/releases
@@ -23,7 +24,7 @@ NGINX_VERSION="1.26.1"
 OPENSSL_VERSION="3.2.1"
 # PCRE2 VERSION
 PCRE_VERSION="10.43"
-LUAJIT_VERSION="2.1-20230410"
+LUAJIT2_VERSION="2.1-20240314"
 NGX_DEVEL_KIT_VERSION="0.3.3"
 LUA_NGINX_MODULE_VERSION="0.10.26"
 
@@ -156,8 +157,8 @@ function lua_install() {
     fi
 
     cd ${workdir}
-    tar -zxvf luajit2-${LUAJIT_VERSION}.tar.gz
-    cd luajit2-${LUAJIT_VERSION}
+    tar -zxvf luajit2-${LUAJIT2_VERSION}.tar.gz
+    cd luajit2-${LUAJIT2_VERSION}
     #make PREFIX=/usr/local/luajit
     #make install PREFIX=/usr/local/luajit
     make; 
