@@ -4,8 +4,8 @@ nginx install package and install script
 
 ## How to Install
 ```
-# 可选版本 1.12.1、1.12.2、1.14.2、1.18.0、1.24.0
-nginx_version=1.24.0
+# 可选版本 1.12.1、1.12.2、1.14.2、1.18.0、1.24.0、1.26.1
+nginx_version=1.26.1
 
 yum -y install git; \
  mkdir -p /usr/local/src/nginx-${nginx_version}_v0; \
