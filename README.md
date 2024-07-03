@@ -1,6 +1,8 @@
 # nginx-install
 nginx install package and install script
 
+## 已经测试的环境
+Rocky Linux 9、CentOS Stream 9
 
 ## How to Install
 ```
